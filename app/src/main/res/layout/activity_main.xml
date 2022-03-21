@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <me.kaneki.download.ui.base.recycler.XRecyclerView
+            android:id="@+id/rlv_md_list"
+            android:background="@android:color/transparent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+
+    <ProgressBar
+            android:id="@+id/pb_md_loading"
+            style="@style/Base.Widget.AppCompat.ProgressBar"
+            android:layout_gravity="center"
+            android:layout_width="50dp"
+            android:layout_height="50dp"/>
+
+    <TextView
+            android:id="@+id/tv_md_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:visibility="gone"
+            android:textStyle="bold"
+            android:text="网络出现异常，点击重试！"
+            android:textSize="20dp"/>
+
+</FrameLayout>

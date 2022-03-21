@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:background="?selectableItemBackground"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+    <me.kaneki.download.ui.base.RoundImageView
+            android:id="@+id/iv_download_cover"
+            android:layout_width="86dp"
+            android:layout_height="86dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp" />
+
+    <TextView
+            android:id="@+id/tv_download_title"
+            android:layout_width="230dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/iv_download_cover"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:singleLine="true"
+            android:focusableInTouchMode="true"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@id/iv_download_cover"
+            android:clickable="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:text=""
+            android:textColor="@color/primary_text"
+            android:textIsSelectable="true"
+            android:textSize="14dp"
+            android:textStyle="bold" />
+
+    <TextView
+            android:id="@+id/tv_download_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/number_progress_bar"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_toRightOf="@id/iv_download_cover"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/secondary_text"
+            android:textSize="12dp" />
+
+    <TextView
+            android:id="@+id/tv_download_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/number_progress_bar"
+            android:layout_alignRight="@id/number_progress_bar"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/secondary_text"
+            android:textSize="12dp" />
+
+    <com.daimajia.numberprogressbar.NumberProgressBar
+            android:id="@+id/number_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/iv_download_cover"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_toRightOf="@id/iv_download_cover"
+            custom:progress_reached_bar_height="3.5dp"
+            custom:progress_reached_color="@color/primary_dark"
+            custom:progress_text_color="@color/primary_dark"
+            android:layout_toLeftOf="@id/btn_control"
+            custom:progress_text_size="12sp"
+            custom:progress_unreached_bar_height="3.5dp"
+            custom:progress_unreached_color="@color/primary_light" />
+
+    <Button
+            android:id="@+id/btn_control"
+            android:layout_width="74dp"
+            android:layout_height="44dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:textSize="12dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="15dp"
+            android:text=""
+            android:textColor="@color/icons"
+            android:theme="@style/Theme.DownloadDemo" />
+</RelativeLayout>
