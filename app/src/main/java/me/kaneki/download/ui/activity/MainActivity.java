@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<AppEntity>> call, Response<List<AppEntity>> response) {
                 loadingProgress.setVisibility(View.GONE);
+                errorTextView.setVisibility(View.GONE);
                 List<AppEntity> appEntityList = response.body();
                 appDownloadListAdapter = new AppDownloadListAdapter(MainActivity.this, appEntityList);
                 xRecyclerView.setAdapter(appDownloadListAdapter);
