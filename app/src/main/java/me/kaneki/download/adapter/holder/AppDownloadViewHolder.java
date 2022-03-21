@@ -55,6 +55,14 @@ public class AppDownloadViewHolder extends RecyclerViewHolder {
 
     public void bindView(final AppEntity appEntity) {
         this.appEntity = appEntity;
+
+        initDefaultView();
+        initTask();
+        initStatus(StatusUtil.getStatus(task));
+        setListener();
+    }
+
+    private void initDefaultView() {
         Glide.with(context)
             .load(appEntity.getIcon())
             .transition(withCrossFade())
@@ -65,16 +73,68 @@ public class AppDownloadViewHolder extends RecyclerViewHolder {
 
         numberProgressBar.setVisibility(View.INVISIBLE);
         numberProgressBar.setMax(100);
-
         sizeTextView.setText(StringUtil.formatFileSize(appEntity.getFile_size()));
+    }
 
+    private void initTask() {
         task = new DownloadTask.Builder(appEntity.getDownload_link(), DemoUtil.getParentFile(context))
             .setFilename(appEntity.getTitle())
             .setMinIntervalMillisCallbackProcess(50)
             .setPassIfAlreadyCompleted(false)
             .build();
         task.setTag(appEntity.getPackage_name());
+    }
 
+    private void initStatus(Status status) {
+        if (status == Status.COMPLETED) {
+            sizeTextView.setText(StringUtil.formatFileSize(appEntity.getFile_size()));
+            numberProgressBar.setVisibility(View.INVISIBLE);
+            statusTextView.setVisibility(View.VISIBLE);
+            statusTextView.setText("已下载");
+            controlButton.setText("重新下载");
+        } else if (status == Status.UNKNOWN) {
+            sizeTextView.setText(StringUtil.formatFileSize(appEntity.getFile_size()));
+            statusTextView.setVisibility(View.GONE);
+            numberProgressBar.setVisibility(View.INVISIBLE);
+            controlButton.setText("下载");
+        } else if (status == Status.IDLE) {
+            statusTextView.setVisibility(View.VISIBLE);
+            numberProgressBar.setVisibility(View.VISIBLE);
+            statusTextView.setText("下载暂停");
+            controlButton.setText("继续");
+        }  else if (status == Status.PENDING) {
+            statusTextView.setVisibility(View.VISIBLE);
+            numberProgressBar.setVisibility(View.VISIBLE);
+            statusTextView.setText("等待下载");
+            controlButton.setText("取消");
+        }
+    }
+
+    private void initStatus(Exception exception, EndCause endCause) {
+        if (exception != null ||
+            endCause == EndCause.ERROR ||
+            endCause == EndCause.FILE_BUSY ||
+            endCause == EndCause.PRE_ALLOCATE_FAILED ||
+            endCause == EndCause.SAME_TASK_BUSY) {
+            statusTextView.setVisibility(View.VISIBLE);
+            numberProgressBar.setVisibility(View.INVISIBLE);
+            statusTextView.setText("下载出错");
+            controlButton.setText("重试");
+        } else if (endCause == EndCause.CANCELED) {
+            statusTextView.setVisibility(View.VISIBLE);
+            numberProgressBar.setVisibility(View.VISIBLE);
+            statusTextView.setText("下载暂停");
+            controlButton.setText("继续");
+        } else if (endCause == EndCause.COMPLETED) {
+            sizeTextView.setText(StringUtil.formatFileSize(appEntity.getFile_size()));
+            numberProgressBar.setVisibility(View.INVISIBLE);
+            statusTextView.setVisibility(View.VISIBLE);
+            statusTextView.setText("已下载");
+            controlButton.setText("重新下载");
+        }
+    }
+
+    private void setListener() {
         controlButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,56 +210,5 @@ public class AppDownloadViewHolder extends RecyclerViewHolder {
                 }
             }
         });
-
-        initStatus(StatusUtil.getStatus(task));
-    }
-
-    private void initStatus(Status status) {
-        if (status == Status.COMPLETED) {
-            sizeTextView.setText(StringUtil.formatFileSize(appEntity.getFile_size()));
-            numberProgressBar.setVisibility(View.INVISIBLE);
-            statusTextView.setVisibility(View.VISIBLE);
-            statusTextView.setText("已下载");
-            controlButton.setText("重新下载");
-        } else if (status == Status.UNKNOWN) {
-            sizeTextView.setText(StringUtil.formatFileSize(appEntity.getFile_size()));
-            statusTextView.setVisibility(View.GONE);
-            numberProgressBar.setVisibility(View.INVISIBLE);
-            controlButton.setText("下载");
-        } else if (status == Status.IDLE) {
-            statusTextView.setVisibility(View.VISIBLE);
-            numberProgressBar.setVisibility(View.VISIBLE);
-            statusTextView.setText("下载暂停");
-            controlButton.setText("继续");
-        }  else if (status == Status.PENDING) {
-            statusTextView.setVisibility(View.VISIBLE);
-            numberProgressBar.setVisibility(View.VISIBLE);
-            statusTextView.setText("等待下载");
-            controlButton.setText("取消");
-        }
-    }
-
-    private void initStatus(Exception exception, EndCause endCause) {
-        if (exception != null ||
-            endCause == EndCause.ERROR ||
-            endCause == EndCause.FILE_BUSY ||
-            endCause == EndCause.PRE_ALLOCATE_FAILED ||
-            endCause == EndCause.SAME_TASK_BUSY) {
-            statusTextView.setVisibility(View.VISIBLE);
-            numberProgressBar.setVisibility(View.INVISIBLE);
-            statusTextView.setText("下载出错");
-            controlButton.setText("重试");
-        } else if (endCause == EndCause.CANCELED) {
-            statusTextView.setVisibility(View.VISIBLE);
-            numberProgressBar.setVisibility(View.VISIBLE);
-            statusTextView.setText("下载暂停");
-            controlButton.setText("继续");
-        } else if (endCause == EndCause.COMPLETED) {
-            sizeTextView.setText(StringUtil.formatFileSize(appEntity.getFile_size()));
-            numberProgressBar.setVisibility(View.INVISIBLE);
-            statusTextView.setVisibility(View.VISIBLE);
-            statusTextView.setText("已下载");
-            controlButton.setText("重新下载");
-        }
     }
 }

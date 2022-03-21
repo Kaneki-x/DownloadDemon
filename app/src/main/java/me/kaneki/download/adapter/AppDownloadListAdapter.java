@@ -13,26 +13,8 @@ import me.kaneki.download.ui.base.recycler.holder.RecyclerViewHolder;
 
 public class AppDownloadListAdapter extends BaseRecyclerAdapter<AppEntity> {
 
-    private List<AppEntity> appDownloadList = new ArrayList<>();
-
     public AppDownloadListAdapter(Context ctx, List<AppEntity> list) {
         super(ctx, list);
-    }
-
-    public void addApp(AppEntity appEntity) {
-        appDownloadList.add(appEntity);
-    }
-
-    public void addAppDownloadList(List<AppEntity> list) {
-        appDownloadList.addAll(list);
-    }
-
-    public void removeApp(AppEntity appEntity) {
-        for (AppEntity object : appDownloadList) {
-            if (appEntity.getPackage_name().equals(object.getPackage_name())) {
-                appDownloadList.remove(object);
-            }
-        }
     }
 
     @Override
