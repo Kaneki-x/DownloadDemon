@@ -1,5 +1,6 @@
 package me.kaneki.download.adapter.holder;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +34,8 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
 
 public class AppDownloadViewHolder extends RecyclerViewHolder {
 
+    private static final HashMap<DownloadTask, EndCause> taskMap = new HashMap<>();
+
     @BindView(R.id.iv_download_cover)
     ImageView coverImage;
     @BindView(R.id.tv_download_title)
@@ -59,6 +62,7 @@ public class AppDownloadViewHolder extends RecyclerViewHolder {
         initDefaultView();
         initTask();
         initStatus(StatusUtil.getStatus(task));
+        initStatus(null, taskMap.get(task));
         setListener();
     }
 
@@ -79,7 +83,7 @@ public class AppDownloadViewHolder extends RecyclerViewHolder {
     private void initTask() {
         task = new DownloadTask.Builder(appEntity.getDownload_link(), DemoUtil.getParentFile(context))
             .setFilename(appEntity.getTitle())
-            .setMinIntervalMillisCallbackProcess(50)
+            .setMinIntervalMillisCallbackProcess(200)
             .setPassIfAlreadyCompleted(false)
             .build();
         task.setTag(appEntity.getPackage_name());
@@ -100,6 +104,9 @@ public class AppDownloadViewHolder extends RecyclerViewHolder {
         } else if (status == Status.IDLE) {
             statusTextView.setVisibility(View.VISIBLE);
             numberProgressBar.setVisibility(View.VISIBLE);
+            if (task.getInfo() != null) {
+                DemoUtil.calcProgressToView(numberProgressBar, task.getInfo().getTotalOffset(), task.getInfo().getTotalLength());
+            }
             statusTextView.setText("下载暂停");
             controlButton.setText("继续");
         }  else if (status == Status.PENDING) {
@@ -107,10 +114,17 @@ public class AppDownloadViewHolder extends RecyclerViewHolder {
             numberProgressBar.setVisibility(View.VISIBLE);
             statusTextView.setText("等待下载");
             controlButton.setText("取消");
+        } else if (status == Status.RUNNING) {
+            statusTextView.setVisibility(View.VISIBLE);
+            numberProgressBar.setVisibility(View.VISIBLE);
+            controlButton.setText("暂停");
         }
     }
 
     private void initStatus(Exception exception, EndCause endCause) {
+        if (exception == null && endCause == null) {
+            return;
+        }
         if (exception != null ||
             endCause == EndCause.ERROR ||
             endCause == EndCause.FILE_BUSY ||
@@ -143,11 +157,11 @@ public class AppDownloadViewHolder extends RecyclerViewHolder {
                     task.enqueue(new DownloadListener4WithSpeed() {
                         @Override
                         public void taskStart(@NonNull DownloadTask task) {
-                            System.out.println("taskStart");
                             if (titleTextView.getTag().equals(task.getTag())) {
                                 controlButton.setText("暂停");
                                 numberProgressBar.setVisibility(View.VISIBLE);
                                 statusTextView.setVisibility(View.VISIBLE);
+                                taskMap.remove(task);
                             }
                         }
 
@@ -160,7 +174,6 @@ public class AppDownloadViewHolder extends RecyclerViewHolder {
                         @Override
                         public void connectEnd(@NonNull DownloadTask task, int blockIndex, int responseCode,
                             @NonNull Map<String, List<String>> responseHeaderFields) {
-                            System.out.println("response code:" + responseCode);
                         }
 
                         @Override
@@ -197,10 +210,10 @@ public class AppDownloadViewHolder extends RecyclerViewHolder {
                         @Override
                         public void taskEnd(@NonNull DownloadTask task, @NonNull EndCause cause,
                             @Nullable Exception realCause, @NonNull SpeedCalculator taskSpeed) {
-                            System.out.println(realCause);
                             if (titleTextView.getTag().equals(task.getTag())) {
                                 System.out.println("task end");
                                 initStatus(realCause, cause);
+                                taskMap.put(task, cause);
                             }
                         }
                     });
